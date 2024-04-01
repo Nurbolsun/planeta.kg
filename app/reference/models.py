@@ -3,8 +3,8 @@ from ckeditor.fields import RichTextField
 
 
 class AbstractClass(models.Model):
-    name_ru = models.CharField(max_length=100, verbose_name='Имя на русском')
-    name_ky = models.CharField(max_length=100, verbose_name='Имя на кыргызском')
+    name_ru = models.CharField(max_length=100, verbose_name='Имя на русском', blank=True)
+    name_ky = models.CharField(max_length=100, verbose_name='Имя на кыргызском', blank=False)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновление")
     is_active = models.BooleanField(verbose_name="Активный", default=True)
@@ -27,7 +27,6 @@ class Category(AbstractClass):
 
 class Image(models.Model):
     image = models.ImageField(upload_to="images/ref", null=True, blank=True, verbose_name="Фото")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='images', verbose_name="Категория")
 
     is_main = models.BooleanField(default=True)
 
@@ -50,7 +49,7 @@ class RefCarMark(AbstractClass):
         verbose_name_plural = "Марки машины"
 
 
-class RefCarFuelType(AbstractClass):
+class RefCarFuel(AbstractClass):
 
     def __str__(self):
         return self.name_ru
@@ -60,7 +59,7 @@ class RefCarFuelType(AbstractClass):
         verbose_name_plural = "Топливы"
 
 
-class RefCarGearBoxType(AbstractClass):
+class RefCarGearBox(AbstractClass):
 
     def __str__(self):
         return self.name_ru
@@ -70,7 +69,7 @@ class RefCarGearBoxType(AbstractClass):
         verbose_name_plural = "Коробка передатчик"
 
 
-class RefCarSteeringWheelType(AbstractClass):
+class RefCarSteeringWheel(AbstractClass):
 
     def __str__(self):
         return self.name_ru
@@ -80,7 +79,7 @@ class RefCarSteeringWheelType(AbstractClass):
         verbose_name_plural = "Рулей"
 
 
-class RefCarWheelDriveType(AbstractClass):
+class RefCarWheelDrive(AbstractClass):
 
     def __str__(self):
         return self.name_ru
@@ -93,11 +92,11 @@ class RefCarWheelDriveType(AbstractClass):
 class RefCarModel(AbstractClass):
     mark_id = models.ForeignKey(RefCarMark, on_delete=models.CASCADE, verbose_name="Марка ID")
     year = models.DateTimeField(verbose_name="Год выпуска")
-    fuel = models.ForeignKey(RefCarFuelType, on_delete=models.CASCADE, verbose_name="Тип топливо")
-    gearbox = models.ForeignKey(RefCarGearBoxType, on_delete=models.CASCADE, verbose_name="Коробка передатчик")
-    steering_wheel = models.ForeignKey(RefCarSteeringWheelType, on_delete=models.CASCADE, verbose_name="Руль")
+    fuel = models.ForeignKey(RefCarFuel, on_delete=models.CASCADE, verbose_name="Тип топливо")
+    gearbox = models.ForeignKey(RefCarGearBox, on_delete=models.CASCADE, verbose_name="Коробка передатчик")
+    steering_wheel = models.ForeignKey(RefCarSteeringWheel, on_delete=models.CASCADE, verbose_name="Руль")
     engine_size = models.CharField(max_length=10, verbose_name="Обьем двигателя")
-    wheel_drive = models.ForeignKey(RefCarWheelDriveType, on_delete=models.CASCADE, verbose_name="Привод")
+    wheel_drive = models.ForeignKey(RefCarWheelDrive, on_delete=models.CASCADE, verbose_name="Привод")
 
     def __str__(self):
         return self.name_ru
@@ -108,10 +107,10 @@ class RefCarModel(AbstractClass):
 
 
 class Product(AbstractClass):
-    code = models.CharField(max_length=100, verbose_name="Код машины")
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
-    car_model_id = models.ManyToManyField(RefCarModel, verbose_name='Модель машины')
-    additional_ru = RichTextField(verbose_name="Информации RU")
+    code = models.CharField(max_length=100, verbose_name="Код машины", blank=False)
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория", blank=True, null=True)
+    car_model_id = models.ManyToManyField(RefCarModel, verbose_name='Модель машины', blank=True)
+    additional_ru = RichTextField(verbose_name="Информации RU", blank=True)
     additional_ky = RichTextField(verbose_name="Информации KG")
     image_id = models.ManyToManyField(Image, verbose_name='Фото продукт')
 
@@ -120,5 +119,5 @@ class Product(AbstractClass):
 
     class Meta:
         verbose_name = "Продукт / запчасть"
-        verbose_name_plural = "Запчасты"
+        verbose_name_plural = "Запчасти"
 
