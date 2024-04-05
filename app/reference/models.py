@@ -1,10 +1,11 @@
 from django.db import models
 from ckeditor.fields import RichTextField
+import datetime
 
 
 class AbstractClass(models.Model):
-    name_ru = models.CharField(max_length=100, verbose_name='Имя на русском', blank=True)
-    name_ky = models.CharField(max_length=100, verbose_name='Имя на кыргызском', blank=False)
+    name_ru = models.CharField(max_length=100, verbose_name='Имя на русском', blank=False)
+    # name_ky = models.CharField(max_length=100, verbose_name='Имя на кыргызском', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновление")
     is_active = models.BooleanField(verbose_name="Активный", default=True)
@@ -25,13 +26,11 @@ class Category(AbstractClass):
         verbose_name_plural = "Категории запчастей"
 
 
-class Image(models.Model):
-    image = models.ImageField(upload_to="images/ref", null=True, blank=True, verbose_name="Фото")
-
-    is_main = models.BooleanField(default=True)
+class PartImage(models.Model):
+    image = models.ImageField(upload_to="images/part_images", verbose_name="Изображение")
 
     def __str__(self):
-        return "Фотографии"
+        return self.image.name
 
     class Meta:
         verbose_name = "Фото"
@@ -89,9 +88,17 @@ class RefCarWheelDrive(AbstractClass):
         verbose_name_plural = "Приводы"
 
 
+def year_choices():
+    return [(r, r) for r in range(1990, datetime.date.today().year+1)]
+
+
+def current_year():
+    return datetime.date.today().year
+
+
 class RefCarModel(AbstractClass):
     mark_id = models.ForeignKey(RefCarMark, on_delete=models.CASCADE, verbose_name="Марка ID")
-    year = models.DateTimeField(verbose_name="Год выпуска")
+    year = models.IntegerField(choices=year_choices, default=current_year, verbose_name="Год выпуска")
     fuel = models.ForeignKey(RefCarFuel, on_delete=models.CASCADE, verbose_name="Тип топливо")
     gearbox = models.ForeignKey(RefCarGearBox, on_delete=models.CASCADE, verbose_name="Коробка передатчик")
     steering_wheel = models.ForeignKey(RefCarSteeringWheel, on_delete=models.CASCADE, verbose_name="Руль")
@@ -106,13 +113,13 @@ class RefCarModel(AbstractClass):
         verbose_name_plural = "Модели машины"
 
 
-class Product(AbstractClass):
-    code = models.CharField(max_length=100, verbose_name="Код машины", blank=False)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория", blank=True, null=True)
+class Part(AbstractClass):
+    code = models.CharField(max_length=100, verbose_name="Код машины", blank=True, null=True)
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория")
     car_model_id = models.ManyToManyField(RefCarModel, verbose_name='Модель машины', blank=True)
     additional_ru = RichTextField(verbose_name="Информации RU", blank=True)
-    additional_ky = RichTextField(verbose_name="Информации KG")
-    image_id = models.ManyToManyField(Image, verbose_name='Фото продукт')
+    additional_ky = RichTextField(verbose_name="Информации KG", blank=True, null=True)
+    images = models.ManyToManyField(PartImage, related_name='parts', verbose_name='Фото продукт')
 
     def __str__(self):
         return self.name_ru

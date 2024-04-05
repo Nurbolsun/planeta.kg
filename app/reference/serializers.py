@@ -9,9 +9,9 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ImageSerializer(serializers.ModelSerializer):
+class PartImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Image
+        model = PartImage
         fields = '__all__'
 
 
@@ -51,7 +51,7 @@ class RefCarModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class PartSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
+        model = Part
         fields = '__all__'
