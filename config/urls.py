@@ -23,6 +23,7 @@ from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/v1/', include('app.reference.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

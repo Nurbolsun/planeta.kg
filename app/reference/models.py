@@ -118,7 +118,9 @@ class Part(AbstractClass):
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория")
     car_model_id = models.ManyToManyField(RefCarModel, verbose_name='Модель машины', blank=True)
     additional_ru = RichTextField(verbose_name="Информации RU", blank=True)
-    additional_ky = RichTextField(verbose_name="Информации KG", blank=True, null=True)
+    price = models.IntegerField(verbose_name="Цена")
+    location = models.TextField(verbose_name="Город", default="Бишкек")
+    # additional_ky = RichTextField(verbose_name="Информации KG", blank=True, null=True)
     images = models.ManyToManyField(PartImage, related_name='parts', verbose_name='Фото продукт')
 
     def __str__(self):
