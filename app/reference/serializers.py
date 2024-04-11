@@ -55,3 +55,9 @@ class PartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Part
         fields = '__all__'
+
+
+class RefCarBodySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RefCarBody
+        fields = '__all__'
