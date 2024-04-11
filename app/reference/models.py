@@ -88,6 +88,16 @@ class RefCarWheelDrive(AbstractClass):
         verbose_name_plural = "Приводы"
 
 
+class RefCarBody(AbstractClass):
+
+    def __str__(self):
+        return self.name_ru
+
+    class Meta:
+        verbose_name = "Тип кузова"
+        verbose_name_plural = "Тип кузовы"
+
+
 def year_choices():
     return [(r, r) for r in range(1990, datetime.date.today().year+1)]
 
@@ -99,10 +109,11 @@ def current_year():
 class RefCarModel(AbstractClass):
     mark_id = models.ForeignKey(RefCarMark, on_delete=models.CASCADE, verbose_name="Марка ID")
     year = models.IntegerField(choices=year_choices, default=current_year, verbose_name="Год выпуска")
-    fuel = models.ForeignKey(RefCarFuel, on_delete=models.CASCADE, verbose_name="Тип топливо")
-    gearbox = models.ForeignKey(RefCarGearBox, on_delete=models.CASCADE, verbose_name="Коробка передатчик")
+    fuel = models.ForeignKey(RefCarFuel, on_delete=models.CASCADE, verbose_name="Тип двигателя")
+    gearbox = models.ForeignKey(RefCarGearBox, on_delete=models.CASCADE, verbose_name="Коробка передач")
+    car_body = models.ForeignKey(RefCarBody, on_delete=models.CASCADE, verbose_name="Тип кузова")
     steering_wheel = models.ForeignKey(RefCarSteeringWheel, on_delete=models.CASCADE, verbose_name="Руль")
-    engine_size = models.CharField(max_length=10, verbose_name="Обьем двигателя")
+    engine_size = models.CharField(max_length=10, verbose_name="Объем двигателя")
     wheel_drive = models.ForeignKey(RefCarWheelDrive, on_delete=models.CASCADE, verbose_name="Привод")
 
     def __str__(self):
